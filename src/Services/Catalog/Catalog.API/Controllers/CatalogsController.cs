@@ -43,7 +43,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Route("{action}/{category}", Name = "GetProductByCategory")]
+        [Route("[action]/{category}", Name = "GetProductByCategory")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
         public async Task<IActionResult> GetProductByCategory(string category)
         {
@@ -53,7 +53,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpGet]
-        [Route("{action}/{name}", Name = "GetProductByName")]
+        [Route("[action]/{name}", Name = "GetProductByName")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Product>))]
         public async Task<IActionResult> GetProductByName(string name)
         {
@@ -63,7 +63,7 @@ namespace Catalog.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type =typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Product))]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
             await _repo.CreateProduct(product);
@@ -82,7 +82,7 @@ namespace Catalog.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
         public async Task<IActionResult> DeleteProduct(string id)
         {
-            return Ok(await _repo.DeleteProduct(id));   
+            return Ok(await _repo.DeleteProduct(id));
         }
     }
 }
