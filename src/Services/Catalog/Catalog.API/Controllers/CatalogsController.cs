@@ -13,8 +13,8 @@ namespace Catalog.API.Controllers
 
         public CatalogController(IProductRepository repo, ILogger<CatalogController> logger)
         {
-            _repo = repo ?? throw new ArgumentException(nameof(repo));
-            _logger = logger ?? throw new ArgumentException(nameof(logger));
+            _repo = repo ?? throw new ArgumentException(null, nameof(repo));
+            _logger = logger ?? throw new ArgumentException(null, nameof(logger));
         }
 
         [HttpGet]
