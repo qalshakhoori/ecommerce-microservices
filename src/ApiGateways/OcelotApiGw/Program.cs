@@ -3,7 +3,12 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.ConfigureLogging((hostingContext, loggingBuilder) =>
+builder.Host
+.ConfigureAppConfiguration((hostingContext, config) =>
+{
+    config.AddJsonFile($"ocelot.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true);
+})
+.ConfigureLogging((hostingContext, loggingBuilder) =>
 {
     loggingBuilder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
     loggingBuilder.AddConsole();
