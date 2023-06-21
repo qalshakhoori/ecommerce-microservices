@@ -1,5 +1,6 @@
 {
     "Routes": [
+        // Catalog API
         {
             "DownstreamPathTemplate": "/api/v1/Catalog",
             "DownstreamScheme": "http",
@@ -10,7 +11,8 @@
                 }
             ],
             "UpstreamPathTemplate": "/Catalog",
-            "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
+            "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+            "FileCacheOptions":  { "TtlSeconds": 30 }
         },
         {
             "DownstreamPathTemplate": "/api/v1/Catalog/{id}",
@@ -58,8 +60,8 @@
                     "Port": "8001"
                 }
             ],
-            "UpstreamPathTemplate": "/Basket/{userName}",
-            "UpstreamHttpMethod": [ "GET", "DELETE" ]
+            "UpstreamPathTemplate": "/Basket",
+            "UpstreamHttpMethod": [ "POST", "DELETE" ]
         },
         {
             "DownstreamPathTemplate": "/api/v1/Basket/Checkout",
@@ -71,7 +73,14 @@
                 }
             ],
             "UpstreamPathTemplate": "/Basket/Checkout",
-            "UpstreamHttpMethod": [ "POST" ]
+            "UpstreamHttpMethod": [ "POST" ],
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "5s",
+                "PeriodTimespan": 1,
+                "Limit": 1
+            }
         },
         // Discount API
         {
@@ -97,7 +106,7 @@
             ],
             "UpstreamPathTemplate": "/Discount",
             "UpstreamHttpMethod": [ "PUT", "POST" ]
-        }, 
+        },
         //Order API
         {
             "DownstreamPathTemplate": "/api/v1/Order/{userName}",
