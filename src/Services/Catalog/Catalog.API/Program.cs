@@ -1,6 +1,7 @@
 using Catalog.API.Data;
 using Catalog.API.Models;
 using Catalog.API.Repositories;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,16 @@ builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("Da
 builder.Services.AddScoped<ICatalogContext, CatalogContext>();  
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "http://localhost:5006";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +35,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
