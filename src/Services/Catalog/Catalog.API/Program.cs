@@ -16,15 +16,15 @@ builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("Da
 builder.Services.AddScoped<ICatalogContext, CatalogContext>();  
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "http://localhost:5006";
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-    });
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer("Bearer", options =>
+//    {
+//        options.Authority = "http://localhost:5006";
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateAudience = false
+//        };
+//    });
 
 var app = builder.Build();
 
@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseAuthentication();
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
