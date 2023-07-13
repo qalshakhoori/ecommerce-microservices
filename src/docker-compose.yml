@@ -70,6 +70,9 @@ services:
       context: .
       dockerfile: WebApps/AspnetRunBasics/Dockerfile
 
+  identityserverdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
 volumes:
   mongo_data:
   portainer_data:

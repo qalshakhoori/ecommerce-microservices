@@ -159,3 +159,12 @@ services:
       - basket.api
       - discount.api
       - ordering.api
+
+  identityserverdb:
+    container_name: identityserverdb
+    environment:
+      MSSQL_SA_PASSWORD: "Identity12345678"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1433:1433"
