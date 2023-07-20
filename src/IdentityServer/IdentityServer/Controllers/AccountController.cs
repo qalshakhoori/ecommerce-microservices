@@ -28,18 +28,20 @@ namespace IdentityServer.Controllers
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(IIdentityServerInteractionService interaction,
             IAuthenticationSchemeProvider schemeProvider, IEventService events,
-            IClientStore clientStore, TestUserStore users = null)
+            IClientStore clientStore, ILogger<AccountController> logger, TestUserStore users = null)
         {
             _interaction = interaction;
             _schemeProvider = schemeProvider;
             _events = events;
-
+            _clientStore = clientStore;
+            _logger = logger;
             // if the TestUserStore is not in DI, then we'll just use the global users collection
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(Config.TestUsers);
+            _users = users ?? new TestUserStore(Config.Users);
         }
 
         [HttpGet]
@@ -102,12 +104,21 @@ namespace IdentityServer.Controllers
                     };
 
                     // issue authentication cookie with subject ID and username
-                    var isuser = new IdentityServerUser(user.SubjectId)
+                    var identityServerUser = new IdentityServerUser(user.SubjectId)
                     {
                         DisplayName = user.Username
                     };
 
-                    await HttpContext.SignInAsync(isuser, props);
+                    try
+                    {
+                        await HttpContext.SignInAsync(identityServerUser, props);
+                    }
+                    catch (Exception exc)
+                    {
+                        _logger.LogError("Failed to login");
+                        _logger.LogError(exc.Message, exc);
+                        throw;
+                    }
 
                     if (context != null)
                     {
@@ -145,7 +156,6 @@ namespace IdentityServer.Controllers
             var viewModel = await GetLoginViewModelAsync(model);
             return View(viewModel);
         }
-
 
         /// <summary>
         /// Show logout page

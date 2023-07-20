@@ -1,5 +1,6 @@
 using IdentityServer;
 using IdentityServer4.EntityFramework.DbContexts;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -9,7 +10,7 @@ var migrationAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
 var connectionString = builder.Configuration.GetConnectionString("IdentityServerDB");
 
 builder.Services.AddIdentityServer()
-    .AddTestUsers(Config.TestUsers)
+    .AddTestUsers(Config.Users)
     .AddConfigurationStore(options =>
     {
         options.ConfigureDbContext = ctxBuilder => ctxBuilder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly));
@@ -19,6 +20,34 @@ builder.Services.AddIdentityServer()
         options.ConfigureDbContext = ctxBuilder => ctxBuilder.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(migrationAssembly));
     })
     .AddDeveloperSigningCredential();
+
+builder.Services
+    //.AddAuthentication(options =>
+    //{
+    //    options.DefaultScheme = "cookies";
+    //    options.DefaultChallengeScheme = "oidc";
+    //})
+    //.AddCookie("cookies", options =>
+    //{
+    //    options.Cookie.Name = "appcookie";
+    //    options.Cookie.SameSite = SameSiteMode.Strict;
+    //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    //})
+    //.AddOpenIdConnect("oidc", options =>
+    //{
+    //    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
+    //    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+    //});
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+           .AddCookie(options =>
+           {
+               // add an instance of the patched manager to the options:
+               options.CookieManager = new ChunkingCookieManager();
+
+               options.Cookie.HttpOnly = true;
+               options.Cookie.SameSite = SameSiteMode.None;
+               options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+           });
 
 builder.Services.AddControllersWithViews();
 
@@ -31,6 +60,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseIdentityServer();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
