@@ -14,6 +14,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+      - "IdentityServer:Url=http://identityserver"
     depends_on:
       - catalogdb
     ports:
@@ -32,6 +33,7 @@ services:
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "GrpcSettings:DiscountUrl=http://discount.grpc"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "IdentityServer:Url=http://identityserver"
     depends_on:
       - basketdb
       - rabbitmq
@@ -102,6 +104,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+      - "IdentityServer:Url=http://identityserver"
     depends_on:
       - discountdb
     ports:
@@ -114,6 +117,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=SwN12345678;"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "IdentityServer:Url=http://identityserver"
     depends_on: 
       - orderdb
       - rabbitmq
@@ -167,4 +171,14 @@ services:
       ACCEPT_EULA: "Y"
     restart: always
     ports:
-      - "1433:1433"
+      - "14330:1433"
+
+  identityserver:
+    container_name: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:IdentityServerDB=Server=identityserverdb;Database=IdentityServerDB;User Id=sa;Password=Identity12345678;"
+    depends_on:
+      - identityserverdb
+    ports:
+      - "8007:80"

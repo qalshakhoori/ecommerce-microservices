@@ -1,5 +1,7 @@
-﻿using Discount.API.Entities;
+﻿using Common;
+using Discount.API.Entities;
 using Discount.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -7,7 +9,8 @@ namespace Discount.API.Controllers
 {
 	[ApiController]
 	[Route("api/v1/[controller]")]
-	public class DiscountController : ControllerBase
+    [Authorize(Constants.Client_Id_Policy)]
+    public class DiscountController : ControllerBase
 	{
 		private readonly IDiscountRepository _repo;
 

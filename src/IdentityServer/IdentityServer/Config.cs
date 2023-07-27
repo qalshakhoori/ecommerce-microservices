@@ -2,6 +2,7 @@
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using Common;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -31,8 +32,8 @@ namespace IdentityServer
             },
             new Client
             {
-                ClientId = "shopping.web",
-                ClientName = "Shopping Web App",
+                ClientId = Constants.Shopping_Client_Id_Value ,
+                ClientName = Constants.Shopping_Client_Name,
                 AllowedGrantTypes= GrantTypes.Code,
                 AllowRememberConsent = false,
                 RedirectUris = new List<string>()
@@ -45,7 +46,7 @@ namespace IdentityServer
                 },
                 ClientSecrets = new List<Secret>()
                 {
-                    new Secret("secret".Sha256())
+                    new Secret(Constants.Shopping_Client_Secret.Sha256())
                 },
                 AllowedScopes= new List<string>()
                 {

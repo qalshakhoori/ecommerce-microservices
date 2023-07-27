@@ -1,6 +1,7 @@
 using Catalog.API.Data;
 using Catalog.API.Models;
 using Catalog.API.Repositories;
+using Common;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,18 +14,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-builder.Services.AddScoped<ICatalogContext, CatalogContext>();  
+builder.Services.AddScoped<ICatalogContext, CatalogContext>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-//builder.Services.AddAuthentication("Bearer")
-//    .AddJwtBearer("Bearer", options =>
-//    {
-//        options.Authority = "http://localhost:5006";
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateAudience = false
-//        };
-//    });
+builder.Services.AddAuthentication(Constants.Authentication_Scheme_Bearer)
+    .AddJwtBearer(Constants.Authentication_Scheme_Bearer, options =>
+    {
+        options.Authority = builder.Configuration.GetValue<string>("IdentityServe:Url");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+        options.RequireHttpsMetadata = false;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Constants.Client_Id_Policy, policy => policy.RequireClaim(Constants.Client_Id_Key, Constants.Shopping_Client_Id_Value));
+});
 
 var app = builder.Build();
 
@@ -36,7 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

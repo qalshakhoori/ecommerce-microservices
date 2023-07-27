@@ -1,11 +1,14 @@
 ﻿using Catalog.API.Entities;
 using Catalog.API.Repositories;
+using Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Authorize(Constants.Client_Id_Policy)]
     public class CatalogController : Controller
     {
         private readonly IProductRepository _repo;

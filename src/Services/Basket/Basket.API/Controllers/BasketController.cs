@@ -2,14 +2,17 @@
 using Basket.API.Entities;
 using Basket.API.Repositories;
 using Basket.API.Services;
+using Common;
 using EventBus.Messages.Events;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Authorize(Constants.Client_Id_Policy)]
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _repo;

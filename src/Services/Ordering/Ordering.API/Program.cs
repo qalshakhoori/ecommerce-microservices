@@ -1,5 +1,7 @@
+using Common;
 using EventBus.Messages.Common;
 using MassTransit;
+using Microsoft.IdentityModel.Tokens;
 using Ordering.API.EventBusConsumer;
 using Ordering.API.Extensions;
 using Ordering.API.Mapping;
@@ -38,6 +40,22 @@ builder.Services.AddScoped<BasketCheckoutConsumer>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAuthentication(Constants.Authentication_Scheme_Bearer)
+    .AddJwtBearer(Constants.Authentication_Scheme_Bearer, options =>
+    {
+        options.Authority = builder.Configuration.GetValue<string>("IdentityServe:Url");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+        options.RequireHttpsMetadata = false;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Constants.Client_Id_Policy, policy => policy.RequireClaim(Constants.Client_Id_Key, Constants.Shopping_Client_Id_Value));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +65,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 //}
 
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
